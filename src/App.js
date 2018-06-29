@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {injectGlobal} from 'styled-components'
 import MapGL from 'react-map-gl';
 import taxiData from './data/taxi';
 import DeckGLOverlay from './DeckGLOverlay';
@@ -6,6 +7,13 @@ import DeckGLOverlay from './DeckGLOverlay';
 // Set your mapbox token here
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN; // eslint-disable-line
 const MAPBOX_STYLE = 'mapbox://styles/mapbox/dark-v9';
+
+injectGlobal`
+  body {
+    margin: 0;
+    padding: 0;
+  }
+`;
 
 class App extends Component {
     constructor(props) {
