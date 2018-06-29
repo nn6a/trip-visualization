@@ -16,12 +16,12 @@ export default class DeckGLOverlay extends Component {
                 data: this.props.data,
                 getPosition: d => d.position,
                 getColor: d => d.pickup ? PICKUP_COLOR : DROPOFF_COLOR,
-                getRadius: d => 5,
                 opacity: 0.5,
-                pickable: false,
-                radiusScale: 5,
+                radiusScale: this.props.settings.radiusScale,
                 radiusMinPixels: 0.25,
-                radiusMaxPixels: 30
+                radiusMaxPixels: 30,
+                pickable: true,
+                onHover: hover => this.props.onHover(hover)
             })
         ];
 
