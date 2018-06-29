@@ -3,7 +3,7 @@ import {injectGlobal} from 'styled-components'
 import MapGL from 'react-map-gl';
 import taxiData from './data/taxi';
 import DeckGLOverlay from './DeckGLOverlay';
-import {LayerControls, SCATTERPLOT_CONTROLS} from './LayerControls';
+import {LayerControls, HEXAGON_CONTROLS} from './LayerControls';
 
 // Set your mapbox token here
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN; // eslint-disable-line
@@ -30,10 +30,12 @@ class App extends Component {
             },
             points: [],
             status: 'LOADING',
-            settings: Object.keys(SCATTERPLOT_CONTROLS).reduce((accu, key) => ({
-                ...accu,
-                [key]: SCATTERPLOT_CONTROLS[key].value
-            }), {}),
+            settings: {
+                ...Object.keys(HEXAGON_CONTROLS).reduce((accu, key) => ({
+                    ...accu,
+                    [key]: HEXAGON_CONTROLS[key].value
+                }), {})
+            },
             x: 0,
             y: 0,
             hoveredObject: null,
@@ -100,13 +102,12 @@ class App extends Component {
                     ...tooltipStyle,
                     transform: `translate(${this.state.x}px, ${this.state.y}px)`
                 }}>
-                    <div>x: {this.state.hoveredObject.position[0]}</div>
-                    <div>y: {this.state.hoveredObject.position[1]}</div>
+                    <div>{JSON.stringify(this.state.hoveredObject)}</div>
                 </div>}
 
                 <LayerControls
                     settings={this.state.settings}
-                    propTypes={SCATTERPLOT_CONTROLS}
+                    propTypes={HEXAGON_CONTROLS}
                     onChange={settings => this._updateLayerSettings(settings)}/>
 
                 <MapGL

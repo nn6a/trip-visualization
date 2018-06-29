@@ -1,6 +1,11 @@
 import React, {Component} from 'react';
 
 export const HEXAGON_CONTROLS = {
+    showHexagon: {
+        displayName: 'Show Hexagon',
+        type: 'boolean',
+        value: true
+    },
     radius: {
         displayName: 'Hexagon Radius',
         type: 'range',
@@ -35,22 +40,6 @@ export const HEXAGON_CONTROLS = {
     }
 };
 
-export const SCATTERPLOT_CONTROLS = {
-    radiusScale: {
-        displayName: 'Scatterplot Radius',
-        type: 'range',
-        value: 30,
-        step: 10,
-        min: 10,
-        max: 200
-    },
-    showHexagon: {
-        displayName: 'Show Hexagon',
-        type: 'boolean',
-        value: true
-    }
-};
-
 export class LayerControls extends Component {
 
     _onValueChange = (settingName, newValue) => {
@@ -71,7 +60,7 @@ export class LayerControls extends Component {
         const {title, settings, propTypes = {}} = this.props;
 
         return (
-            <div style={layerControl}>
+            <div style={layerControlStyle}>
                 {title && <h4>{title}</h4>}
                 {Object.keys(settings).map(key =>
                     <div key={key}>
@@ -138,7 +127,7 @@ const Slider = ({settingName, value, propType, onChange}) => {
     );
 };
 
-const layerControl = {
+const layerControlStyle = {
     borderRadius: 3,
     boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
     fontFamily: 'ff-clan-web-pro, "Helvetica Neue", Helvetica, sans-serif !important',
