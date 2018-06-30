@@ -1,4 +1,4 @@
-import DeckGL, {ScatterplotLayer, HexagonLayer} from 'deck.gl';
+import DeckGL, {ScatterplotLayer, HexagonLayer, PathLayer} from 'deck.gl';
 import React, {Component} from 'react';
 
 const PICKUP_COLOR = [0, 128, 255];
@@ -27,7 +27,7 @@ const elevationRange = [0, 1000];
 
 export default class DeckGLOverlay extends Component {
     render() {
-        if (!this.props.data) {
+        if (!this.props.data || !this.props.timelineData) {
             return null;
         }
 
@@ -59,7 +59,19 @@ export default class DeckGLOverlay extends Component {
                 coverage: this.props.settings.coverage,
                 upperPercentile: this.props.settings.upperPercentile,
                 onHover: hover => this.props.onHover(hover)
-            }) : null
+            }) : null,
+            new PathLayer({
+                id: 'timeline-layer',
+                data: this.props.timelineData,
+                opacity: 1,
+                pickable: true,
+                widthScale: 20,
+                widthMinPixels: 2,
+                getPath: d => d.path,
+                getColor: d => d.color,
+                getWidth: () => 5,
+                onHover: hover => this.props.onHover(hover)
+            })
         ];
 
         return (

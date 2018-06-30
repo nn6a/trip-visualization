@@ -2,12 +2,14 @@ import React, {Component} from 'react';
 import {injectGlobal} from 'styled-components'
 import MapGL from 'react-map-gl';
 import taxiData from './data/taxi';
+import timelineData from './data/timeline'
 import DeckGLOverlay from './DeckGLOverlay';
 import {LayerControls, HEXAGON_CONTROLS} from './LayerControls';
 
 // Set your mapbox token here
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN; // eslint-disable-line
-const MAPBOX_STYLE = 'mapbox://styles/mapbox/dark-v9';
+// const MAPBOX_STYLE = 'mapbox://styles/mapbox/dark-v9';
+const MAPBOX_STYLE = 'mapbox://styles/noah398/cjj0vb5140x1t2rn2p6umq4vi';
 
 injectGlobal`
   body {
@@ -23,12 +25,16 @@ class App extends Component {
             viewport: {
                 width: window.innerWidth,
                 height: window.innerHeight,
-                longitude: -74,
-                latitude: 40.7,
+                // longitude: -74,
+                // latitude: 40.7,
+                longitude: 100.534131,
+                latitude: 13.758490,
                 zoom: 11,
+                pitch: 30,
                 maxZoom: 16
             },
             points: [],
+            timelinePoints: [],
             status: 'LOADING',
             settings: {
                 ...Object.keys(HEXAGON_CONTROLS).reduce((accu, key) => ({
@@ -44,6 +50,7 @@ class App extends Component {
 
     componentDidMount () {
         this._processData();
+        this._processTimelineData();
         window.addEventListener('resize', this._resize);
         this._resize();
     }
@@ -73,6 +80,21 @@ class App extends Component {
         }
     };
 
+    _processTimelineData = () => {
+        if (timelineData) {
+            this.setState({status: 'LOADED'});
+            const timelinePoints = timelineData.locations.reduce((accu, curr) => {
+                // divide by 10000000 to convert E7 lat/long into normal lat/long
+                accu.push([curr.longitudeE7 / 10000000, curr.latitudeE7 / 10000000]);
+                return accu;
+            }, []);
+            this.setState({
+                timelinePoints,
+                status: 'READY'
+            });
+        }
+    };
+
     _resize = () => {
         this._onViewportChange({
             width: window.innerWidth,
@@ -95,6 +117,11 @@ class App extends Component {
     };
 
     render () {
+        const timelineData = [{
+            path: this.state.timelinePoints,
+            name: 'timeline',
+            color: [255, 0, 128]
+        }];
         return (
             <div>
                 {this.state.hoveredObject &&
@@ -118,6 +145,7 @@ class App extends Component {
                     <DeckGLOverlay
                         viewport={this.state.viewport}
                         data={this.state.points}
+                        timelineData={timelineData}
                         settings={this.state.settings}
                         onHover={hover => this._onHover(hover)}
                     />
