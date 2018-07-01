@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 import {injectGlobal} from 'styled-components'
-import MapGL from 'react-map-gl';
+import MapGL, {FlyToInterpolator} from 'react-map-gl';
 import taxiData from './data/taxi';
 import timelineData from './data/timeline'
 import DeckGLOverlay from './DeckGLOverlay';
 import {LayerControls, HEXAGON_CONTROLS} from './LayerControls';
+import PointControl from './PointControl';
 
 // Set your mapbox token here
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN; // eslint-disable-line
@@ -116,6 +117,16 @@ class App extends Component {
         this.setState({x, y, hoveredObject: object});
     };
 
+    _goToViewport = ({longitude, latitude}) => {
+        this._onViewportChange({
+            longitude,
+            latitude,
+            zoom: 11,
+            transitionInterpolator: new FlyToInterpolator(),
+            transitionDuration: 3000
+        });
+    };
+
     render () {
         const timelineData = [{
             path: this.state.timelinePoints,
@@ -136,6 +147,8 @@ class App extends Component {
                     settings={this.state.settings}
                     propTypes={HEXAGON_CONTROLS}
                     onChange={settings => this._updateLayerSettings(settings)}/>
+
+                <PointControl onViewportChange={this._goToViewport}/>
 
                 <MapGL
                     {...this.state.viewport}

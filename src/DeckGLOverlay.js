@@ -26,6 +26,11 @@ const LIGHT_SETTINGS = {
 const elevationRange = [0, 1000];
 
 export default class DeckGLOverlay extends Component {
+    // _initialize(gl) {
+    //     gl.blendFunc(gl.SRC_ALPHA, gl.DST_ALPHA);
+    //     gl.blendEquation(gl.FUNC_ADD);
+    // }
+
     render() {
         if (!this.props.data || !this.props.timelineData) {
             return null;
