@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
-import {injectGlobal} from 'styled-components'
-import MapGL, {FlyToInterpolator} from 'react-map-gl';
+import styled, {injectGlobal} from 'styled-components'
+import MapGL, {FlyToInterpolator, Marker} from 'react-map-gl';
 import taxiData from './data/taxi';
 import timelineData from './data/timeline'
+import pointData from './data/points'
 import DeckGLOverlay from './DeckGLOverlay';
 import {LayerControls, HEXAGON_CONTROLS} from './LayerControls';
 import PointControl from './PointControl';
@@ -26,8 +27,6 @@ class App extends Component {
             viewport: {
                 width: window.innerWidth,
                 height: window.innerHeight,
-                // longitude: -74,
-                // latitude: 40.7,
                 longitude: 100.534131,
                 latitude: 13.758490,
                 zoom: 11,
@@ -46,6 +45,8 @@ class App extends Component {
             x: 0,
             y: 0,
             hoveredObject: null,
+            // popupInfo: {},
+            selectedPoint: {}
         };
     }
 
@@ -114,16 +115,24 @@ class App extends Component {
     };
 
     _onHover = ({x, y, object}) => {
-        this.setState({x, y, hoveredObject: object});
+        // this.setState({x, y, hoveredObject: object});
     };
 
-    _goToViewport = ({longitude, latitude}) => {
+    // _onPointClick = (popupInfo) => {
+    //     console.log(popupInfo);
+    //     this.setState({popupInfo});
+    // };
+
+    _goToViewport = ({longitude, latitude, name}) => {
         this._onViewportChange({
             longitude,
             latitude,
-            zoom: 11,
+            zoom: 15,
             transitionInterpolator: new FlyToInterpolator(),
-            transitionDuration: 3000
+            transitionDuration: 1000
+        });
+        this.setState({
+            selectedPoint: {longitude, latitude, name}
         });
     };
 
@@ -148,7 +157,7 @@ class App extends Component {
                     propTypes={HEXAGON_CONTROLS}
                     onChange={settings => this._updateLayerSettings(settings)}/>
 
-                <PointControl onViewportChange={this._goToViewport}/>
+                <PointControl pointData={pointData} onViewportChange={this._goToViewport}/>
 
                 <MapGL
                     {...this.state.viewport}
@@ -159,9 +168,17 @@ class App extends Component {
                         viewport={this.state.viewport}
                         data={this.state.points}
                         timelineData={timelineData}
+                        pointData={pointData}
                         settings={this.state.settings}
                         onHover={hover => this._onHover(hover)}
+                        // onPointClick={this._onPointClick}
                     />
+
+                    {Object.keys(this.state.selectedPoint).length &&
+                    <StyledMarker latitude={this.state.selectedPoint.latitude} longitude={this.state.selectedPoint.longitude}>
+                        {this.state.selectedPoint.name}
+                    </StyledMarker>
+                    }
                 </MapGL>
             </div>
         );
@@ -178,5 +195,9 @@ const tooltipStyle = {
     zIndex: 9,
     pointerEvents: 'none'
 };
+
+const StyledMarker = styled(Marker)`
+  color: #fff;
+`;
 
 export default App;

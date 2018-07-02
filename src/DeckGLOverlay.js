@@ -68,14 +68,26 @@ export default class DeckGLOverlay extends Component {
             new PathLayer({
                 id: 'timeline-layer',
                 data: this.props.timelineData,
-                opacity: 1,
+                opacity: 0.8,
                 pickable: true,
                 widthScale: 20,
                 widthMinPixels: 2,
                 getPath: d => d.path,
                 getColor: d => d.color,
-                getWidth: () => 5,
-                onHover: hover => this.props.onHover(hover)
+                getWidth: () => 1,
+            }),
+            new ScatterplotLayer({
+                id: 'point-layer',
+                data: this.props.pointData,
+                pickable: true,
+                opacity: 0.8,
+                radiusScale: 80,
+                radiusMinPixels: 0.25,
+                radiusMaxPixels: 30,
+                getPosition: d => [d.longitude, d.latitude, 30],
+                getColor: d => [0, 128, 255],
+                onHover: hover => this.props.onHover(hover),
+                // onClick: d => this.props.onPointClick(d.object)
             })
         ];
 

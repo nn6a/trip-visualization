@@ -1,15 +1,14 @@
 import React, {Component} from 'react';
-import CITIES from './data/points.json';
 
 export default class PointControl extends Component {
-    _renderButton = (city, index) => {
+    _renderButton = (point, index) => {
         return (
             <div key={`btn-${index}`} className="input">
-                <input type="radio" name="city"
-                       id={`city-${index}`}
-                       defaultChecked={city.city === 'San Francisco'}
-                       onClick={() => this.props.onViewportChange(city)}/>
-                <label htmlFor={`city-${index}`}>{city.city}</label>
+                <input type="radio" name="point"
+                       id={`point-${index}`}
+                       defaultChecked={point.name === ''}
+                       onClick={() => this.props.onViewportChange(point)}/>
+                <label htmlFor={`point-${index}`}>{point.name}</label>
             </div>
         );
     };
@@ -17,7 +16,7 @@ export default class PointControl extends Component {
     render () {
         return (
             <div style={layerControlStyle}>
-                {CITIES.filter(city => city.state === 'California').map(this._renderButton)}
+                {this.props.pointData.map(this._renderButton)}
             </div>
         );
     }
