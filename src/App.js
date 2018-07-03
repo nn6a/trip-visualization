@@ -1,11 +1,9 @@
 import React, {Component} from 'react';
 import styled, {injectGlobal} from 'styled-components'
 import MapGL, {FlyToInterpolator, Marker} from 'react-map-gl';
-import taxiData from './data/taxi';
 import timelineData from './data/timeline'
 import pointData from './data/points'
 import DeckGLOverlay from './DeckGLOverlay';
-import {LayerControls, HEXAGON_CONTROLS} from './LayerControls';
 import PointControl from './PointControl';
 
 // Set your mapbox token here
@@ -33,15 +31,8 @@ class App extends Component {
                 pitch: 30,
                 maxZoom: 16
             },
-            points: [],
             timelinePoints: [],
             status: 'LOADING',
-            settings: {
-                ...Object.keys(HEXAGON_CONTROLS).reduce((accu, key) => ({
-                    ...accu,
-                    [key]: HEXAGON_CONTROLS[key].value
-                }), {})
-            },
             x: 0,
             y: 0,
             hoveredObject: null,
@@ -51,7 +42,6 @@ class App extends Component {
     }
 
     componentDidMount () {
-        this._processData();
         this._processTimelineData();
         window.addEventListener('resize', this._resize);
         this._resize();
@@ -60,27 +50,6 @@ class App extends Component {
     componentWillUnmount () {
         window.removeEventListener('resize', this._resize);
     }
-
-    _processData = () => {
-        if (taxiData) {
-            this.setState({status: 'LOADED'});
-            const points = taxiData.reduce((accu, curr) => {
-                accu.push({
-                    position: [Number(curr.pickup_longitude), Number(curr.pickup_latitude)],
-                    pickup: true
-                });
-                accu.push({
-                    position: [Number(curr.dropoff_longitude), Number(curr.dropoff_latitude)],
-                    pickup: false
-                });
-                return accu;
-            }, []);
-            this.setState({
-                points,
-                status: 'READY'
-            });
-        }
-    };
 
     _processTimelineData = () => {
         if (timelineData) {
@@ -108,10 +77,6 @@ class App extends Component {
         this.setState({
             viewport: {...this.state.viewport, ...viewport}
         });
-    };
-
-    _updateLayerSettings = (settings) => {
-        this.setState({settings});
     };
 
     _onHover = ({x, y, object}) => {
@@ -152,11 +117,6 @@ class App extends Component {
                     <div>{JSON.stringify(this.state.hoveredObject)}</div>
                 </div>}
 
-                <LayerControls
-                    settings={this.state.settings}
-                    propTypes={HEXAGON_CONTROLS}
-                    onChange={settings => this._updateLayerSettings(settings)}/>
-
                 <PointControl pointData={pointData} onViewportChange={this._goToViewport}/>
 
                 <MapGL
@@ -166,7 +126,6 @@ class App extends Component {
                     mapboxApiAccessToken={MAPBOX_TOKEN}>
                     <DeckGLOverlay
                         viewport={this.state.viewport}
-                        data={this.state.points}
                         timelineData={timelineData}
                         pointData={pointData}
                         settings={this.state.settings}
