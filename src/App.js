@@ -9,7 +9,7 @@ import PointControl from './PointControl';
 // Set your mapbox token here
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN; // eslint-disable-line
 // const MAPBOX_STYLE = 'mapbox://styles/mapbox/dark-v9';
-const MAPBOX_STYLE = 'mapbox://styles/noah398/cjj0vb5140x1t2rn2p6umq4vi';
+const MAPBOX_STYLE = 'mapbox://styles/mapbox/dark-v9';
 
 injectGlobal`
   body {
@@ -29,14 +29,14 @@ class App extends Component {
                 latitude: 13.758490,
                 zoom: 11,
                 pitch: 30,
-                maxZoom: 16
+                maxZoom: 17
             },
             timelinePoints: [],
+            timelineTimestamps: [],
             status: 'LOADING',
             x: 0,
             y: 0,
             hoveredObject: null,
-            // popupInfo: {},
             selectedPoint: {}
         };
     }
@@ -59,8 +59,13 @@ class App extends Component {
                 accu.push([curr.longitudeE7 / 10000000, curr.latitudeE7 / 10000000]);
                 return accu;
             }, []);
+            const timelineTimestamps = timelineData.locations.reduce((accu, curr) => {
+                accu.push(curr.timestampMs);
+                return accu;
+            }, []);
             this.setState({
                 timelinePoints,
+                timelineTimestamps,
                 status: 'READY'
             });
         }
@@ -83,16 +88,17 @@ class App extends Component {
         // this.setState({x, y, hoveredObject: object});
     };
 
-    // _onPointClick = (popupInfo) => {
-    //     console.log(popupInfo);
-    //     this.setState({popupInfo});
-    // };
+    _onPointClick = ({longitude, latitude, name}) => {
+        this.setState({
+            selectedPoint: {longitude, latitude, name}
+        });
+    };
 
     _goToViewport = ({longitude, latitude, name}) => {
         this._onViewportChange({
             longitude,
             latitude,
-            zoom: 15,
+            zoom: 14,
             transitionInterpolator: new FlyToInterpolator(),
             transitionDuration: 1000
         });
@@ -104,6 +110,7 @@ class App extends Component {
     render () {
         const timelineData = [{
             path: this.state.timelinePoints,
+            timestamp: this.state.timelineTimestamps,
             name: 'timeline',
             color: [255, 0, 128]
         }];
@@ -117,7 +124,11 @@ class App extends Component {
                     <div>{JSON.stringify(this.state.hoveredObject)}</div>
                 </div>}
 
-                <PointControl pointData={pointData} onViewportChange={this._goToViewport}/>
+                <PointControl
+                    pointData={pointData}
+                    onViewportChange={this._goToViewport}
+                    selectedPoint={this.state.selectedPoint}
+                />
 
                 <MapGL
                     {...this.state.viewport}
@@ -130,7 +141,7 @@ class App extends Component {
                         pointData={pointData}
                         settings={this.state.settings}
                         onHover={hover => this._onHover(hover)}
-                        // onPointClick={this._onPointClick}
+                        onPointClick={this._onPointClick}
                     />
 
                     {Object.keys(this.state.selectedPoint).length &&
@@ -156,7 +167,10 @@ const tooltipStyle = {
 };
 
 const StyledMarker = styled(Marker)`
+  background-color: rgba(0, 0, 0, 0.32);
   color: #fff;
+  padding: 4px 8px;
+  border-radius: 0 8px 8px 8px;
 `;
 
 export default App;

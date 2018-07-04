@@ -6,7 +6,7 @@ export default class PointControl extends Component {
             <div key={`btn-${index}`} className="input">
                 <input type="radio" name="point"
                        id={`point-${index}`}
-                       defaultChecked={point.name === ''}
+                       checked={point.name === this.props.selectedPoint.name}
                        onClick={() => this.props.onViewportChange(point)}/>
                 <label htmlFor={`point-${index}`}>{point.name}</label>
             </div>
