@@ -1,14 +1,15 @@
 import React, {Component} from 'react';
 import styled, {injectGlobal} from 'styled-components'
+import MediaQuery from 'react-responsive';
 import MapGL, {FlyToInterpolator, Marker} from 'react-map-gl';
 import timelineData from './data/timeline'
 import pointData from './data/points'
 import DeckGLOverlay from './DeckGLOverlay';
 import PointControl from './PointControl';
+import MobilePointControl from './MobilePointControl';
 
 // Set your mapbox token here
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN; // eslint-disable-line
-// const MAPBOX_STYLE = 'mapbox://styles/mapbox/dark-v9';
 const MAPBOX_STYLE = 'mapbox://styles/mapbox/dark-v9';
 
 injectGlobal`
@@ -37,7 +38,8 @@ class App extends Component {
             x: 0,
             y: 0,
             hoveredObject: null,
-            selectedPoint: {}
+            selectedPoint: {},
+            isControlShown: false
         };
     }
 
@@ -107,6 +109,12 @@ class App extends Component {
         });
     };
 
+    _toggleMenu = () => {
+        this.setState({
+            isControlShown: !this.state.isControlShown
+        })
+    };
+
     render () {
         const timelineData = [{
             path: this.state.timelinePoints,
@@ -124,11 +132,27 @@ class App extends Component {
                     <div>{JSON.stringify(this.state.hoveredObject)}</div>
                 </div>}
 
-                <PointControl
-                    pointData={pointData}
-                    onViewportChange={this._goToViewport}
-                    selectedPoint={this.state.selectedPoint}
-                />
+                <MediaQuery minWidth={768}>
+                    {(matches) => {
+                        if (matches) {
+                            return (
+                                <PointControl
+                                    pointData={pointData}
+                                    onViewportChange={this._goToViewport}
+                                    selectedPoint={this.state.selectedPoint}/>
+                            );
+                        } else {
+                            return (
+                                <MobilePointControl
+                                    pointData={pointData}
+                                    onViewportChange={this._goToViewport}
+                                    selectedPoint={this.state.selectedPoint}
+                                    isControlShown={this.state.isControlShown}
+                                    toggleMenu={this._toggleMenu}/>
+                            );
+                        }
+                    }}
+                </MediaQuery>
 
                 <MapGL
                     {...this.state.viewport}
@@ -145,7 +169,8 @@ class App extends Component {
                     />
 
                     {Object.keys(this.state.selectedPoint).length &&
-                    <StyledMarker latitude={this.state.selectedPoint.latitude} longitude={this.state.selectedPoint.longitude}>
+                    <StyledMarker latitude={this.state.selectedPoint.latitude}
+                                  longitude={this.state.selectedPoint.longitude}>
                         {this.state.selectedPoint.name}
                     </StyledMarker>
                     }

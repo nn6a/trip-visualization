@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 
 export default class PointControl extends Component {
-    _renderButton = (point, index) => {
+    _renderMenu = (point, index) => {
         return (
-            <div key={`btn-${index}`} className="input">
+            <div key={`item-${index}`}>
                 <input type="radio" name="point"
                        id={`point-${index}`}
                        checked={point.name === this.props.selectedPoint.name}
@@ -16,7 +16,7 @@ export default class PointControl extends Component {
     render () {
         return (
             <div style={layerControlStyle}>
-                {this.props.pointData.map(this._renderButton)}
+                {this.props.pointData.map(this._renderMenu)}
             </div>
         );
     }
@@ -25,7 +25,6 @@ export default class PointControl extends Component {
 const layerControlStyle = {
     borderRadius: 3,
     boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
-    fontFamily: 'ff-clan-web-pro, "Helvetica Neue", Helvetica, sans-serif !important',
     fontSize: '12px',
     lineHeight: 1.833,
     width: 200,
