@@ -35,9 +35,6 @@ class App extends Component {
             timelinePoints: [],
             timelineTimestamps: [],
             status: 'LOADING',
-            x: 0,
-            y: 0,
-            hoveredObject: null,
             selectedPoint: {},
             isControlShown: false
         };
@@ -84,10 +81,6 @@ class App extends Component {
         this.setState({
             viewport: {...this.state.viewport, ...viewport}
         });
-    };
-
-    _onHover = ({x, y, object}) => {
-        // this.setState({x, y, hoveredObject: object});
     };
 
     _onPointClick = ({longitude, latitude, name}) => {
@@ -164,7 +157,6 @@ class App extends Component {
                         timelineData={timelineData}
                         pointData={pointData}
                         settings={this.state.settings}
-                        onHover={hover => this._onHover(hover)}
                         onPointClick={this._onPointClick}
                     />
 

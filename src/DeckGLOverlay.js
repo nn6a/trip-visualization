@@ -28,7 +28,6 @@ export default class DeckGLOverlay extends Component {
                 radiusMinPixels: 1,
                 getPosition: d => [d.longitude, d.latitude, 30],
                 getColor: d => [0, 128, 255],
-                onHover: hover => this.props.onHover(hover),
                 onClick: d => this.props.onPointClick(d.object)
             })
         ];
