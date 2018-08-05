@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 
 export default class DeckGLOverlay extends Component {
     render() {
-        if (!this.props.timelineData) {
+        if (!this.props.timelineData && !this.props.pointData) {
             return null;
         }
 
